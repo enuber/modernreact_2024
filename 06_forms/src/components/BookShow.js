@@ -1,11 +1,11 @@
 /* 
-Toggling form display
+110: Toggling form display
 because we are changing the view of the bookshow we will need state. If someone clicks on the pencil we will go from displaying the title, to displaying an editable box with a save button.
 
 showEdit can be either true or false to show wether we want to be able to edit or not. and what to thus show on screen.
 */
 /* 
-Closing the form on submit
+113: Closing the form on submit
 
 two things need to happen when the form is submitted
 1) Need to tell the App that there is a new title for a particular book

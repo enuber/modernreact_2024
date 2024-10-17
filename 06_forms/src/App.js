@@ -2,10 +2,14 @@
 IN FUTURE TO RUN THIS PROJECT
 npm run start -> starts the React dev server
 npm run server -> starts JSON-Server
+
+NOTE: JSON - SERVER install should do 
+npm i json-server@0 
+V1 is broken.
 */
 
 /*
-State Location:
+87: State Location:
 State Updated? - rerender the component it is defined in + all the components children
 
 Find all the components that need to use this state
@@ -13,7 +17,7 @@ Find all the components that need to use this state
 Define the state in the lowest common parent
 */
 /* 
-Updating State: (based on doing books.push(info) which is BAD and then how to fix)
+92: Updating State: (based on doing books.push(info) which is BAD and then how to fix)
   const [books, setBooks] = useState([]);
 JS sees you want to create an array so it finds an empty spot in memory and puts an array there
 
@@ -23,7 +27,7 @@ then when you do books.push({}) it modifies this array and puts the info into th
 
 Then when you call setBooks and pass in the books array react sees that the reference to the array and then behind the scenes makes a check. setBooks means to rerender a component but, react looks for the reference to the current state and sees that what you are trying to set is already there so nothing happens. No component rerenders. 
 
-to fix this, we will create a new array copy all the elments from the old array
+to fix this, we will create a new array copy all the elements from the old array
 then add the new element to the end
 
 ex
@@ -34,7 +38,7 @@ so now in this fix, there is a new array which is held separately in memory. So 
 
 */
 /*
-Don't mutate that state
+93: Don't mutate that state
 
 Modifying not mutating
 const [colors, setColors] = useState([]);
@@ -45,7 +49,7 @@ const updatedColors = [newColor, ...colors]
 end:
 const updatedColors = [...colors, newColor]
 
-Inserting elements: - based on passing in an index number to the function.
+97: Inserting elements: - based on passing in an index number to the function.
 remember slice returns back a collection of elements from an array. 
 colors.slice(0, 1) - means we will start at index 0 and go up to but not include the second number which here is index 1. In this case we would just get the element at index 0.
 colors.slice(1) - means we start at this index and give everything including the element at this index through the end of the array.
@@ -58,7 +62,7 @@ const updatedColors = [
   ...colors.slice(index)
 ]
 
-Removing Elements: using filter which always returns a new array
+99: Removing Elements: using filter which always returns a new array
 filter - if filter function returns true the value is added to the new array, if it is false it is not added. 
 
 const updatedColors = colors.filter(color=>{
@@ -75,7 +79,7 @@ const removeBookById = (id) => {
   })
 }
 
-Modifying Elements
+101: Modifying Elements
 
 const updatedBookById = (id, newTitle) => {
   const updatedBooks = books.map(book=> {
@@ -87,7 +91,7 @@ const updatedBookById = (id, newTitle) => {
   setBooks(updatedBooks)
 }
 
-adding, changing or removing object properties
+104: adding, changing or removing object properties
 
 adding/changing - create a new object, copy/paste all properties from existing (use ...), add to your updated property and or change a property.
 
@@ -105,13 +109,13 @@ setFruit(rest);
 
 */
 /* 
-Adding Images:
+116: Adding Images:
 gives random photos which can be used in development. 
 https://picsum.photos
 */
 /*************** SECTION 7 DATA PERSISTENCE WITH API REQUESTS ********************/
 /* 
-Adding data persistence
+117: Adding data persistence
 
 React App - request for books - goes to JSON SERVER an open source project for dev and learning - access a database with a plain file - JSON SEVER then sends back a response with a list of books. 
 
@@ -121,7 +125,7 @@ our app component will still have a books piece of state. Along with all the com
 in the components like when you delete a book, it will send the info to the server to delete the book and get back a response that says the book was deleted. then once it gets that response back, it will then contact the app component and update the piece of state there as well. 
 */
 /* 
-Server setup
+119: Server setup
 JSON server setup
 Install JSON-Server with NPM 
 create a 'db.json' file where our data will be stored
@@ -153,7 +157,7 @@ run the server now in the second terminal
 npm run server
 */
 /* 
-How the API works
+121: How the API works
 
 db.json file
 {
@@ -179,7 +183,7 @@ DELETE http://localhost:3001/books/idhere - to delete a book and the response ba
 other things we can do would be get an individual book, or update just very particular properties. But the above are most common. CRUD - create, read, update, delete
 */
 /* 
-Introducing the REST client
+122: Introducing the REST client
 
 Standalone API Client
 Program used to make request to an API server, specifically for development/testing
@@ -206,7 +210,7 @@ reason we do this, inside of our code editor is simply because we can create a f
 Remember this isn't a necessary step. Just a way to work with things and let other engineers know how to work with our files.
 */
 /* 
-Introducing useEffect
+127 Introducing useEffect
 
 useEffect is a function we import from React
 used to run code when a component is initially rendered and (sometimes) when it is rerendered
@@ -219,7 +223,7 @@ useEffect(()=> {
   console.log('hi')
 },[])
 
-useEffect in Action
+128 useEffect in Action
 
 the useEffect function gets called at very specific points of time. It will always be called the first time that we render...the initial render. 
 
