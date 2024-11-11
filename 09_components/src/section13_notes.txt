@@ -1,0 +1,309 @@
+Section 13 - Navigation
+
+220. Traditional Browser Navigation -
+
+Standard Browser Behaviour
+When the browser loads a new HTML doc all existing JS variables and code get dumped
+
+Doesn't really matter for a traditional HTML focused App
+
+Kind of bad for a React App
+
+If our React app followed traditional navigation ideas, it would take way more more request to show basic content. 
+
+Ex: loading images vs posts
+1) load index.html
+2) load bundle.js based off of index.html
+3) load images
+if a user then asked for posts
+1) load index.html
+2) load bundle.js based off of index.html
+3) load posts
+vs non react
+1) go to posts.html 
+or 
+1) go to images.html
+
+We want to make as few requests as possible
+
+221. Theory of Navigation in React
+
+user types in our address
+Always send back the index.html file
+When app loads up, look at the address bar and use it to decide what content to show
+
+during inital load...
+I'm just starting up
+Looking at address bar
+if it is /posts show PostList
+if it is /images show ImageList
+
+
+user clicks a link or presses back button
+stop the browser's default page switching behaviour
+Figure out where the user was trying to go
+update content on screen to trick the user into thinking they swapped pages
+update address bar to trick user into thinking they swapped pages
+
+user clicked on a link
+intercept the navigation event
+where was the user going
+update the address bar so it appears they've been navigated
+if it is /posts show PostList
+if it is /images show ImageList
+
+223. Answering Critical Questions
+
+Always send back the index.html file
+  Create React App already does this by default
+
+When app loads up, look at the address bar and use it to decide waht content to show
+  How do we look at the address bar? What part of it do we care about?
+
+  The part we care about in the address bar is what is after the '/' we only care about what is after the path. Remember that if there is no '/' or there is just a '/' this means we would just be showing the initial page.
+
+  To access the location and the url bar we use
+  window.location. This returns back an object that includes a pathname so we could use window.location.pathname 
+
+Update address bar to trick user into thinking they swapped pages
+  there are two ways to do this. 
+
+  1) use the window.location property and set it. which would cause a full page refresh which we don't want.
+
+  2) use window.history.pushState({}, '', '/dropdown');
+    This updates the address bar but doesn't cause a page refresh
+    first argument is an empty object
+    second argument is an empty string
+    third argument is the path we want to visit. Only the path is needed.
+
+    The other nice thing about this is that the back button will work as expected. 
+
+225. Handling link clicks
+Stop the browser's default page switching behaviour
+  How do we detect a user clicking on a link? 
+
+  function Link({to}) {
+    const handleClick = (evt => {
+      evt.preventDefault();
+      console.log('User navigating to: ', to);
+    })
+    return <a onClick={handleClick} href={to}>Click</a>
+  }
+
+  In the above function the prop 'to' describes the path that user will go to if they click this
+
+  evt.preventDefault() stops the stanard navigation
+
+  onClick={handleClick} detects a click
+
+
+226. Clicking on the back button?
+  Window emits a 'popstate' event if the user current url was added by 'pushState'
+
+  the addresses typed in will appear in a stack with the first site at the bottom of the stack and each new URL or same site new path name will go on to the stack. This way you can go back and forward but if you are on the top of the stack you can't actually go forward. Each time you click back or forward you get a full page refresh.
+
+  when you use pushState and then go back/forward the page doesn't refresh. when a user is going forward and back there is a popstate event 
+
+  window.addeEventListener('popstate', ()=> console.log(window.location.pathname));
+
+Update content on screen to trick the user into thinking they swapped pages
+
+237. Navigation Wrapup
+
+popular navigaiton libraries...
+
+React-Router
+Wouter
+React-location
+Reach-Router 
+
+
+// MODAL WINDOW SECTION 14
+
+239 toggling visibility 
+
+How to handle where the button and state are held
+
+Option 1:
+Modal shows a button and owns state - this is probably not a good idea as we might want to show a mdoal without the user clicking on a button
+
+Option 2:
+Parent owns state to keep track of whether the modal shoudl be displayed this will allow the parent to show a modal at any time for any reason. So ModalPage will be the parent that has both these. 
+
+// MAKE A FEATURE FULL DATA TABLE SECTION 15
+
+Will define data in the parent component which is TablePage. This will be an array of objects. 
+
+To make the table reuseable we need specific things..
+
+requirements:
+variable number of rows
+variable number of columns
+number of columns doesn't have to match number of properties in object
+some columns are sortable
+sortable columns can sort different kinds of values
+cells can be calculated using multiple propertiescells can display arbitrary data
+
+
+SECTION 16 DATA SORTING
+
+adding sorting to the table
+
+plan:
+understand how the table is supposed to work
+review sorting in JS
+Look at options jfor adding sort to the table
+Remember the table component is supposed to be reuseable
+
+review of sorting:
+const data = [5,1,4,3];
+data.sort();
+
+sort() is a built in function with JS it converts elements in the array to strings then sorts which means 
+that if 1 was a 10 it would sort as 10, 3, 4, 5 because 1 comes before 3 so even 10 then comes before 3.
+
+To fix this we need to add a comparator function. this gets passed into sort()
+
+//this works with numbers
+data.sort((a, b) => {
+  return a - b
+});
+
+this will help fix the issue. 
+How it works
+
+5, 1, 4, 3
+b  a
+
+should 'a' go before 'b'? return a negative number
+should 'b' go before 'a'? return a positive number
+are they the same? return 0
+
+const data = ['t', 'A', 'a', 'B', 'b']
+
+data.sort((a, b)=>{
+  return a.localeCompare(b);
+})
+
+Works same way as numbers with the same compare as a and b returning a positive/negative/0 
+
+Sorting objects
+in a way we are doing a transform where we take some info from the object to base the sorting off off.
+
+const data = [
+  {name: 'Tomato', cost: 10, weight: 5},
+  {name: 'Carrot', cost: 15, weight: 2},
+  {name: 'Onion', cost: 5, weight: 7},
+]
+
+function getSortValue(vegetable) {
+  return vegetable.cost;
+}
+data.sort((a, b)=>{
+ const valueA = getSortValue(a);
+ const valueB = getSortValue(b);
+
+  if (typeof valueA === 'string') {
+    return valueA.localeCompare(valueB);
+  } else {
+    return valueA - valueB;
+  }
+})
+
+the above has all been for ascending order. To flip this to descending, multiply the return value by -1
+
+another way to implement this...
+
+const data = [
+  {name: 'Tomato', cost: 10, weight: 5},
+  {name: 'Carrot', cost: 15, weight: 2},
+  {name: 'Onion', cost: 5, weight: 7},
+]
+
+function getSortValue(vegetable) {
+  return vegetable.cost;
+}
+const sortOrder = 'asc';
+data.sort((a, b)=>{
+ const valueA = getSortValue(a);
+ const valueB = getSortValue(b);
+
+  const reverseOrder = sortOrder === 'asc' ? 1: -1;
+
+  if (typeof valueA === 'string') {
+    return valueA.localeCompare(valueB) * reverseOrder;
+  } else {
+    return (valueA - valueB)  * reverseOrder;
+  }
+})
+
+Optional sorting...
+
+next steps with our table
+Code in table component with sorting added:
+State to track sorting order
+function to handle click on a header
+    Only handle click if sorting enabled
+rendering headers 
+    if sorting enabled add sort direction icons
+if sorting enabled  
+    sorting logic
+rendering rows
+assemble and return the table
+
+
+Small extra FEATURE
+
+currently we are passing into the table a label with the header and a render which tells us what the cells will be filled with
+
+we are going to change this so that header is now separate
+
+header - optional function to decide what to show header
+label - what the header content will say
+render - what will show up in the cells
+
+Big reveal
+
+To set this up we will have the TablePage with data and config. Config will now include a sortValue function if it can be sorted.
+
+This data and config will be passed to SortableTable. This will not show anything on screen but will modify some props that are going to go down to the table component and add in a click event handler that will implement the actual sorting logic. 
+
+we are going to add in a new component called SortableTable
+Look at each object in the config array
+Does the object have a 'sortValue' function
+If so this column must be sortable
+add a header property that will show a clickable header cell
+when user clicks this, sort the data and pass the sortedData down to table
+
+Then we will send sortedData and config to Table
+
+
+//SECTION 17
+
+revisiting custom hooks
+
+Custom Hooks:
+functions that contain some reuseable logic
+custom hooks usually reuse built-in hooks (like useState, useEffect)
+usually easiest to extract logic into a hook rather htan making a hook first
+
+The plan:
+Make a tiny demo component with a tiny bit of logic
+Learn a design process to extract that logic into a custom hook
+Go back to SortableTable and repeat the design process
+
+
+//Section 18
+
+useReducer - hook for managing state, this defines state in a component just like useState.
+
+for app...we will be refactoring the CounterPage to use useState without any custom hooks
+
+Refacotr with a new hook called useReducer, (useReducer is a different way of handling state in a component)
+
+Goal - to get some prep for Redux.
+
+Refactor of this...
+will be adding in a decrement button, a field to add any amount, and a button to add what was typed in. 
+
+So with this, we will have new state called valueToAdd and two handlers handleChange for the typed in field and handleSubmit for a button that will add this typed in field in. 
