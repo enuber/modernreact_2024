@@ -10,6 +10,7 @@ function SortableTable(props) {
     config
   );
 
+  // we are looking at each column to see if it is sortable or not. If it isn't just return it, if it is, we are adding a header to it where we will show the arrows and the label
   const updatedConfig = config.map((column) => {
     if (!column.sortValue) return column;
     return {
@@ -20,7 +21,7 @@ function SortableTable(props) {
           onClick={() => setSortColumn(column.label)}
         >
           <div className="flex items-center">
-            {/* {getIcons(column.label, sortBy, sortOrder)} */}
+            {getIcons(column.label, sortBy, sortOrder)}
             {column.label}
           </div>
         </th>
@@ -32,35 +33,35 @@ function SortableTable(props) {
   return <Table {...props} config={updatedConfig} data={sortedData} />;
 }
 
-// function getIcons(label, sortBy, sortOrder) {
-//   if (label !== sortBy) {
-//     return (
-//       <div>
-//         <GoArrowSmallUp />
-//         <GoArrowSmallDown />
-//       </div>
-//     );
-//   }
-//   if (sortOrder === null) {
-//     return (
-//       <div>
-//         <GoArrowSmallUp />
-//         <GoArrowSmallDown />
-//       </div>
-//     );
-//   } else if (sortOrder === 'asc') {
-//     return (
-//       <div>
-//         <GoArrowSmallUp />
-//       </div>
-//     );
-//   } else if (sortOrder === 'desc') {
-//     return (
-//       <div>
-//         <GoArrowSmallDown />
-//       </div>
-//     );
-//   }
-// }
+function getIcons(label, sortBy, sortOrder) {
+  if (label !== sortBy) {
+    return (
+      <div>
+        <GoArrowUp />
+        <GoArrowDown />
+      </div>
+    );
+  }
+  if (sortOrder === null) {
+    return (
+      <div>
+        <GoArrowUp />
+        <GoArrowDown />
+      </div>
+    );
+  } else if (sortOrder === 'asc') {
+    return (
+      <div>
+        <GoArrowUp />
+      </div>
+    );
+  } else if (sortOrder === 'desc') {
+    return (
+      <div>
+        <GoArrowDown />
+      </div>
+    );
+  }
+}
 
 export default SortableTable;

@@ -147,7 +147,7 @@ cells can be calculated using multiple propertiescells can display arbitrary dat
 
 SECTION 16 DATA SORTING
 
-adding sorting to the table
+261 adding sorting to the table
 
 plan:
 understand how the table is supposed to work
@@ -155,7 +155,7 @@ review sorting in JS
 Look at options jfor adding sort to the table
 Remember the table component is supposed to be reuseable
 
-review of sorting:
+262 review of sorting:
 const data = [5,1,4,3];
 data.sort();
 
@@ -179,6 +179,7 @@ should 'a' go before 'b'? return a negative number
 should 'b' go before 'a'? return a positive number
 are they the same? return 0
 
+263 Sorting Strings
 const data = ['t', 'A', 'a', 'B', 'b']
 
 data.sort((a, b)=>{
@@ -187,7 +188,7 @@ data.sort((a, b)=>{
 
 Works same way as numbers with the same compare as a and b returning a positive/negative/0 
 
-Sorting objects
+264 Sorting objects
 in a way we are doing a transform where we take some info from the object to base the sorting off off.
 
 const data = [
@@ -196,6 +197,7 @@ const data = [
   {name: 'Onion', cost: 5, weight: 7},
 ]
 
+// this is assuming being sorted by cost but can update this function, you can update to whatever you want vetable.weight, vegetable.name
 function getSortValue(vegetable) {
   return vegetable.cost;
 }
@@ -228,6 +230,7 @@ data.sort((a, b)=>{
  const valueA = getSortValue(a);
  const valueB = getSortValue(b);
 
+  // this means that if we want ascending order we will get 1 if descending then -1 
   const reverseOrder = sortOrder === 'asc' ? 1: -1;
 
   if (typeof valueA === 'string') {
@@ -237,9 +240,10 @@ data.sort((a, b)=>{
   }
 })
 
-Optional sorting...
+267 Optional sorting...
 
 next steps with our table
+
 Code in table component with sorting added:
 State to track sorting order
 function to handle click on a header
@@ -252,7 +256,7 @@ rendering rows
 assemble and return the table
 
 
-Small extra FEATURE
+268 Small extra FEATURE
 
 currently we are passing into the table a label with the header and a render which tells us what the cells will be filled with
 
@@ -262,7 +266,7 @@ header - optional function to decide what to show header
 label - what the header content will say
 render - what will show up in the cells
 
-Big reveal
+271 Big reveal
 
 To set this up we will have the TablePage with data and config. Config will now include a sortValue function if it can be sorted.
 

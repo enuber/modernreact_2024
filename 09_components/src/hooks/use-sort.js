@@ -17,14 +17,13 @@ function useSort(data, config) {
       setSortOrder('desc');
       setSortBy(label);
     } else if (sortOrder === 'desc') {
+      // when going back to no sorting we don't care what we are sorting by so resetting that to null as well.
       setSortOrder(null);
       setSortBy(null);
     }
   };
 
-  //only sort data if sortOrder && sortBy are not null
-  //make a copy of the 'data' prop so we are not directly modifying data
-  //find the correct sortvalue function and use it for sorting the array
+  //1. only sort data if sortOrder && sortBy are not null 2. make a copy of the 'data' prop so we are not directly modifying data 3. find the correct sortValue function and use it for sorting the array
   let sortedData = data;
   if (sortOrder && sortBy) {
     const { sortValue } = config.find((column) => column.label === sortBy);

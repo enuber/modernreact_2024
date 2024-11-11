@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 
 function Table({ data, config, keyFn }) {
+  // calling column as it's just giving us the header of each column.
   const renderedHeaders = config.map((column) => {
     if (column.header) {
       return <Fragment key={column.label}>{column.header()}</Fragment>;

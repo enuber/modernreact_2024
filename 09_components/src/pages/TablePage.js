@@ -1,4 +1,5 @@
 import SortableTable from '../components/SortableTable';
+// can use Table instead of SortedTable if you want a plain table
 import Table from '../components/Table';
 
 function TablePage() {
@@ -9,6 +10,7 @@ function TablePage() {
     { name: 'Lime', color: 'bg-green-500', score: 4 },
   ];
 
+  // the render value is taking in the information and pulling off what is needed to make a specific row so in first case, we pass in data which is now named fruit and pull off what we need which is just the fruit.name. Then for color, we pull off the color and put it into the div to make the small colored square etc. This allows for the Table component to be reuseable because it will be able to just display each row based on info being passed into it. If a table is bigger or smaller, the Table component doesn't care, it just reads the info from the config array where each object represents a column of data.
   const config = [
     {
       label: 'Name',
@@ -26,13 +28,14 @@ function TablePage() {
     },
   ];
 
+  // this will be used as the key for each row in the table
   const keyFn = (fruit) => {
     return fruit.name;
   };
 
   return (
     <div>
-      <Table data={data} config={config} keyFn={keyFn} />
+      <SortableTable data={data} config={config} keyFn={keyFn} />
     </div>
   );
 }
