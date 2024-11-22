@@ -284,7 +284,7 @@ Then we will send sortedData and config to Table
 
 //SECTION 17
 
-revisiting custom hooks
+282. revisiting custom hooks
 
 Custom Hooks:
 functions that contain some reuseable logic
