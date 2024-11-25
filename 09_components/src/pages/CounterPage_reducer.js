@@ -92,17 +92,18 @@ In order to help prevent typos we can decalre these as constant variables that w
 */
 /* 
 298 Immer library
+npm i immer
 immer lets you directly mutate state. 
 
 you can mutate state,
 do not have to return a new value
-but still need to do a return in a switch statement because of fall through.
+but still need to do a return in a switch statement because of fall through where the case statement continues to run.
 
 
 */
 
 //with immer have to wrap reducer with produce and then can mutate state directly
-import produce from 'immer';
+import { produce } from 'immer';
 import { useReducer } from 'react';
 import Button from '../components/Button';
 import Panel from '../components/Panel';
