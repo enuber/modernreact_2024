@@ -1,0 +1,36 @@
+300. What is redux? 
+Redux is a library for managing state using the same techniques as useReducer
+
+useReducer - in order to use 
+we sent an action item into the dispatch Function which gets sent along to our reducer and that caused us to create some new state.
+
+This is still the same process for Redux
+
+Differences...
+with useReducer all of our state was created and maintained in the react world. We were trying to create some state that we were going to use inside of a component and it's children. Example we might make an app comnponent, produce some state inside of there with useReducer and we can use that state inside the app component and all of it's children as well. 
+
+With Redux...
+with redux, we create a 'store' to create and maintain state. individual components can connect to the store and access state. 
+we are going to create a separate object called the redux store. the redux store lives seperately from our react application. So we have to form connections between our individual components and the redux store. To make this easier we use a library called react-redux. This is a library to help communicate between the React and Redux sides of our projects. 
+
+with useReducer there is one single reducer function to manage state. With Redux we often have multiple different reducer functions. And each different reducer function is usually going to be in charge of managing a different part of our state. 
+
+Example: a reducer for users, a reducer for videos, a reducer for messages
+
+------------
+301 Redux vs Redux toolkit
+
+One very popular reason, that we use Redux really boils down to the dispatch function. Anytime we want to change our state in any way, when we are using Redux or useReducer we have to call the dispatch function.
+
+One reason that this is so popular is that on a really big project with lots and lots of components, it may be hard to keep track of what is going on and may be confusing. It may be hard to understand why state is updating and where that update is coming from. The dispatch function is the central point of initiating any change of state. We have to dispatch an action. It makes it easier to see and understand what is happening by looking at the dispatch function. 
+
+Not so great part is that we have to write out a lot of boilerplate code just to make sure the redcucer knows what to do. 
+
+Classic Redux - the older style
+
+Redux Toolkit - RTK wraps around plain redux, specifically simplifies the action type creation process, this is the recommended way moving forward. 
+
+------
+302 app overview
+codesandbox.io/s/rtk-360ssw
+
