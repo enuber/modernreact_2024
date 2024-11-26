@@ -1,0 +1,53 @@
+Video 327 thinking about derived state
+
+Redux store Design
+
+1. Identify what state exists in the app
+2. Identify how that state changes over time
+3. Group together common pieces of state
+4. Create a slice for each group
+
+What state do we need
+name - string
+cost - number
+searchTerm - string
+cars - array of objects {id, name, cost}
+
+//Note - these two are not states we really need
+totalCost - number
+matchedCars - ???
+
+Derived State - values that we can calculate using existing state. (this is a concept not an actual thing)
+So totalCost is derived by using the cars Array and adding up the cost of each car object.
+For matchedCars, we can use the name piece of state and cars array and see if they are matching.
+
+///////////////////
+video 328 - thinking about redux design
+
+how is the state changing over time?
+change name
+change cost
+change search change
+add car
+remove car
+
+with this list, we can come up with then names we will use
+changeName
+changeCost
+changeSearchTGerm
+addCar
+removeCar
+
+Group together common pieces of state
+state related to adding cars 
+name
+cost
+
+state releated to the list of cars
+searchTerm
+cars - []
+
+create a slice for each group
+
+state related to adding cars -> form slice
+starte related to list of cars -> cars slice
