@@ -1,4 +1,19 @@
-chapter 349
+/*
+To run this project you need to have two terminals
+
+npm start
+
+npm run start:server
+*/
+
+
+Video 349
+Note that there are specific versions for faker and react-icons that are being used. 
+
+npm i --save-exact @faker-js/faker@7.6.0 react-icons@4.6.0
+
+_____________
+chapter 356 - Reminder on request conventions
 
 how to request reminder
 
@@ -10,7 +25,7 @@ delete a user - DELETE http://localhost:3005/users/1 where the 1 here is the ID 
 
 ---
 
-chapter 350
+chapter 357 - data fetching techniques
 
 options for data fetching in redux toolkit
 
@@ -37,15 +52,15 @@ reducers should only operate on their arguements no outside variables.
 
 ---
 
-chapter 352
+chapter 359 - Addomg state for data loading
 
 flow of what is expected
-show a loading message whil we are making the request
+show a loading message while we are making the request
 when we get our data hide the loading message, show a list of users
 if an error occurs with the request show an error message
 
 so for this state is changing
-what state do we need ot implement this?
+what state do we need to implement this?
 
 inside usersSlice
 data - array of objects has an id and name
@@ -62,25 +77,26 @@ this implies that for every request we will need two separate actions to be disp
 
 ---
 
-chapter 353
+chapter 360 Understanding Async Thunks
 
 What an async thunk function is
 
-start the request -> async thunk function (auto dispatch during data loading) -> action type pending
+start the request -> async thunk function (auto dispatch actions during data loading) -> action type of pending
 |
 |
 v
-response request success -> asunch thunk function -> action type fullfilled
+response request success -> async thunk function -> action type of fullfilled
 
-async thunk goal is to automatically dispatch actions for us during the data loading process. This will have an action that is dispatched which will have something like a type of pending. This action will get sent off to our reducers and we will configure our slice to watch for this action. When it sees that action we are going to update our state and specifically cahnge the isLoading to true in the users slice.
+async thunk goal is to automatically dispatch actions for us during the data loading process. This will have an action that is dispatched which will have something like a type of pending. This action will get sent off to our reducers and we will configure our slice to watch for this action. When it sees that action we are going to update our state and specifically change the isLoading to true in the users slice.
 
-Then when we get our request, async thunk will see we got our data successfully, it will send out a section action with a type that is something like fulfilled. It will flow into our reducers and we will set up in our users slice something to watch for this action to come in and update isloading to false.
+Then when we get our request, async thunk will see we got our data successfully, it will send out a second action with a type that is something like fulfilled. It will flow into our reducers and we will set up in our users slice something to watch for this action to come in and update isloading to false.
 
 If there is an error, it is the same process. But the action will have something like a type of rejected.
 
 ---
 
-chapter 354
+chapter 361 - Steps for adding a thunk
+
 creating an async thunk
 
 1. create a new file for your thunk. name it after the purpose of the request

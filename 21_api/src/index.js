@@ -1,9 +1,9 @@
 /*
 To run this project you need to have two terminals
 
-run npm start
+npm start
 
-run npm start:server
+npm run start:server
 */
 
 import './index.css';

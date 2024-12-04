@@ -10,6 +10,7 @@ const usersSlice = createSlice({
     isLoading: false,
     error: null,
   },
+  // there are three actions fetchUsers, addUser, removeUser. Then there are three stages for each pending, fulfilled, rejected.
   extraReducers(builder) {
     builder.addCase(fetchUsers.pending, (state, action) => {
       state.isLoading = true;

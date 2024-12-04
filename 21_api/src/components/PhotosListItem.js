@@ -1,5 +1,5 @@
 import { useRemovePhotoMutation } from '../store/apis/photosApi';
-import { GoTrash } from 'react-icons/go';
+import { GoTrashcan } from 'react-icons/go';
 
 function PhotosListItem({ photo }) {
   const [removePhoto] = useRemovePhotoMutation();
@@ -23,7 +23,7 @@ function PhotosListItem({ photo }) {
           hover:opacity-80
         "
       >
-        <GoTrash className="text-3xl" />
+        <GoTrashcan className="text-3xl" />
       </div>
     </div>
   );
