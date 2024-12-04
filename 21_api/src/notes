@@ -1,0 +1,281 @@
+chapter 349
+
+how to request reminder
+
+create a user - POST http://localhost:3005/users inside body of request {name: 'myra'} JSON server will then give this an ID for us
+
+fetch all users - GET http://localhost:3005/users will give us back a list of all the users
+
+delete a user - DELETE http://localhost:3005/users/1 where the 1 here is the ID of the user to delete
+
+---
+
+chapter 350
+
+options for data fetching in redux toolkit
+
+async thunk functions - we will use this to handle users
+
+redux toolkit query - we will use this to handle albums and photos
+
+usually you use one of these not both, we are using both to learn.
+
+where do we make requests?
+
+component
+user did something - need to change state
+so we better dispatch an action
+
+action is sent to redux store
+dispatch -> reducer -> state
+
+state is returned to the component.
+
+under no scenario should you make a request in a reducer
+reducers should be 100% synchronous
+reducers should only operate on their arguements no outside variables.
+
+---
+
+chapter 352
+
+flow of what is expected
+show a loading message whil we are making the request
+when we get our data hide the loading message, show a list of users
+if an error occurs with the request show an error message
+
+so for this state is changing
+what state do we need ot implement this?
+
+inside usersSlice
+data - array of objects has an id and name
+isLoading - boolean true if we are currently fetching some data and false if we are not fetching anything
+error - null if no error, error object if there is an error
+
+so in our case, we have two paths
+when the application loads we need to fetch some data
+when doing this, one of two things happens we either finish or we fail
+this implies that for every request we will need two separate actions to be dispatched
+
+1. start -> finish
+2. start -> error
+
+---
+
+chapter 353
+
+What an async thunk function is
+
+start the request -> async thunk function (auto dispatch during data loading) -> action type pending
+|
+|
+v
+response request success -> asunch thunk function -> action type fullfilled
+
+async thunk goal is to automatically dispatch actions for us during the data loading process. This will have an action that is dispatched which will have something like a type of pending. This action will get sent off to our reducers and we will configure our slice to watch for this action. When it sees that action we are going to update our state and specifically cahnge the isLoading to true in the users slice.
+
+Then when we get our request, async thunk will see we got our data successfully, it will send out a section action with a type that is something like fulfilled. It will flow into our reducers and we will set up in our users slice something to watch for this action to come in and update isloading to false.
+
+If there is an error, it is the same process. But the action will have something like a type of rejected.
+
+---
+
+chapter 354
+creating an async thunk
+
+1. create a new file for your thunk. name it after the purpose of the request
+2. create the thunk. give it a base type that describes the purpose of the request
+3. in the thunk, make the request, return the data that you want to use in the reducder
+4. in the slice, add extraReducers, watch for the action types made by the thunk
+5. export the thunmk from the store/index.js file
+6. when a user does something, dispatch the thunk function to run it.
+
+the first argument that we provide to create async thunk is going to be referred to as our base type. So it's going ot be a string. its going to be used to generate the types that were like type|pending or type|fulfilled. So in fetchUsers.js when we say
+
+const fetchUsers = createAsyncThunk('users/fetch');
+
+the string is 'users/fetch' and for the action type being sent it will be 'users/fetch/pending' which async thunk does automatically. We can use any string we want as it doesn't matter. We will not use this 'users/fetch' part for anything else. It won't be typed out or used again. But we want it to be something that makes sense for debugging purposes.
+
+---
+
+chapter 355
+
+when we go into userSlice, we import in the fetchUsers thunk. Automatically created for us in that thunk are
+fetchUsers.pending
+fetchUsers.fulfilled
+fetchUsers.rejected
+
+which means we don't have to type this into the extraReducers type field. The field we are watching which will trigger the callback function. We could write out users/fetch/pending which would work as well but it is better to use fetchUsers.pending.
+
+---
+
+chapter 376
+
+fetch albums for specific user
+
+get request to localhost:3005/albums?userId=2
+
+this means that json server will only return albums associated with userId: 2 in the list of albums. so our list of albums will have an id, title, and userId
+
+to create the albums
+
+post request to localhost:3005/albums with title and userId, the id itself will get created by jsonserver
+
+---
+
+chapter 377
+
+application level state - state that many components will care about. Best stored in Redux.
+
+component level state - state that only one component will care about. Best stored in a component.
+
+---
+
+chapter 383
+
+Redux Toolkit Query
+
+we use this module and some fuctions inside of it to create an API. When we are using RTQ we are talking about some client side code that we write in our React application. It's goal is to provide an interface to go and fetch data. After config we are going to get back a slice, which contains a combied reducer. some of those many reducers, a bunch of action creator functions and so on. This API is also going to contain some thunk functions as well. Ultimately what we care about are a collection of hooks. These hooks are going to automate the data fetching process inside of our components.
+
+For our project we will be creating a series of endpoints fetchAlbums, AddAlbum and removeAlbum. These endpoints will have instructions on how to do what they imply that they are going to do. We will get back some specific hooks as well.
+
+useFetchAlbumsQuery, useAddAlbumMutation, useRemoveAlbumMutation
+
+Query - means we are making a request to read or fetch some data.
+Mutation - means we are making a request to change or write some data
+
+These hooks we will then use inside a component.
+
+const {data, error, isLoading} = useFetchAlbumsQuery()
+
+this will be inside a component and, we will then do something with this info such as displaying a loader, doing what we need to with the data and/or displaying an error if something goes wrong.
+
+---
+
+chapter 384
+
+creating RTK Query API
+1 identify a group of related request that your app needs to make
+
+2 make a new file that will create the api
+
+3 the api needs to store a ton of state related to data, request status, errors, add a reducerPath
+
+reducerPath - property on the big state object where all the API state should be maintained. This will have tons of state added by the API to handle requests. The reducerPath here is albums. It can't be same key that has been used and should describe what it is being used for.
+
+albums: {
+queries: {},
+mutations: {},
+provided: {},
+subscriptions: {},
+config: {}
+}
+
+4 The api needs ot know how and where to send requests. Add a baseQuery.
+
+we import fetchBaseQuery from redux toolkit. It is a function to make a pre-configured version of 'fetch'. Fetch is what we normally use to make requests to get some data similar to axios but fetch is built into the browser.
+
+5 add endpoints one for each kind of request you want to make. Reqs that read data are queries, write data are mutations.
+
+endpoints
+
+what is the goal: want to fetch a list of albums, want to creat an album, want to remove an album
+
+give a simplified name: fetchAlbums, createAlbum, removeAlbum
+
+query or mutation: querry, mutation, mutation
+
+what's the path for this request, relative to baseURL: /albums, /albums, /albums/+userId
+
+what's the query string for this: ?userId=userId, ,
+
+what's the method for this request: GET, POST, DELETE
+
+what's the body for the req: , {title, userId},
+
+6 export all of the automatically generated hooks
+
+7 Connect the API to the store. Reducer, middleware and listeners
+
+8 Export the hooks from the store/index.js file
+
+---
+
+chapter 387
+
+const { data, error, isLoading} = useFetchAlbumQuery(user);
+
+data - data returned from the server
+error - error if one occurred
+isLoading - true if loading data for the first time only
+isFetching - true if currently loading data
+refetch - function tell the query to rerun
+
+---
+
+chapter 390
+
+const [addAlbum, results] = useAddAlbumMutation();
+
+mutations give you a function to run when you want to change some data
+
+results is similar to what we get is something similar to what is in a query so data, error, isLoading...
+
+a query runs immediately when the component is displayed on the screen (by default)
+
+---
+
+chapter 391
+
+options for handling updated data
+
+1 take the newly created album from the reponse and add it into our list of albums
+Pro - only one request
+Con - all code is more complicate, response might not contain the needed data
+
+2 after creating a new album, make a second request to get all albums
+Pro - easier to picture data flow in app
+Con - two requests
+
+---
+
+chapter 392
+
+Tag system...
+Automatic data refetching is implemented using the tag system
+
+Tags are a lot easier if you first undestand how RTKQ tracks requests
+
+Quick aside on RTKQ internals
+
+if we made two calls using useFetchAlbumsQuery in our code one after the other and you use the network tab, you will see that only one call is actually made. it is de-duplicating.
+
+---
+
+chapter 393
+
+simplication...
+
+behind the scenes, right after first call is made, it goes and sees a second call. As the endpoint and the argument data is the same, RTKQ knows it has the same info. So rather than making the second call, it is going ot rteturn some information about this already created request to the second call.
+
+---
+
+chapter 394
+
+simplification...
+
+tag system is used to mark certain queries as being out of date or expired after specific mutations are executed.
+
+so with the tag system, we will mark our data with a tag and, when a mutation is called such as addAlbum, we will invalidate the tag letting the data know it is now out of date and should all to retrieve the updated data. This would happen to all queries with the same tag name.
+
+While this works, there needs to be fine tuning as, in our example if other users albums list are opened, this will cause requests to update data for each of them that are open which could end up being alot of info.
+
+---
+
+chapter 401
+
+what to do if didn't have userId for the tag to remove an album
+
+1 could in albumslistitem pass in the user at removeAlbum({album, user}) then inside of removeAlbum mutation for third argument we would have (result, error, {album, user})
+
+2 modify the tags themselves to handle multiple bits of data to watch for

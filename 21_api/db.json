@@ -1,0 +1,68 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Myra"
+    },
+    {
+      "name": "Travis Roob",
+      "id": 2
+    },
+    {
+      "name": "Sheryl Waelchi",
+      "id": 3
+    },
+    {
+      "name": "Spencer Lueilwitz",
+      "id": 5
+    },
+    {
+      "name": "Christina Aufderhar",
+      "id": 6
+    }
+  ],
+  "albums": [
+    {
+      "id": 10,
+      "title": "hiking trip",
+      "userId": 1
+    },
+    {
+      "userId": 1,
+      "title": "Small Concrete Gloves",
+      "id": 11
+    },
+    {
+      "userId": 1,
+      "title": "Handcrafted Fresh Chair",
+      "id": 13
+    }
+  ],
+  "photos": [
+    {
+      "albumId": 10,
+      "url": "https://loremflickr.com/150/150/abstract?lock=6382422992093184",
+      "id": 3
+    },
+    {
+      "albumId": 10,
+      "url": "https://loremflickr.com/150/150/abstract?lock=7235808966737920",
+      "id": 4
+    },
+    {
+      "albumId": 10,
+      "url": "https://loremflickr.com/150/150/abstract?lock=1308882630606848",
+      "id": 5
+    },
+    {
+      "albumId": 10,
+      "url": "https://loremflickr.com/150/150/abstract?lock=2450273119240192",
+      "id": 6
+    },
+    {
+      "albumId": 10,
+      "url": "https://loremflickr.com/150/150/abstract?lock=1205677798195200",
+      "id": 8
+    }
+  ]
+}
