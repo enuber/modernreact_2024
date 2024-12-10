@@ -6,6 +6,7 @@ export function useThunk(thunk) {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
+  //useCallback allows us to create a function and only redefine the function if it changes in some way
   const runThunk = useCallback(
     (arg) => {
       setIsLoading(true);

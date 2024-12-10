@@ -20,7 +20,7 @@ export const store = configureStore({
 
 setupListeners(store.dispatch);
 
-//this just means find the file fetchUsers and export everything from it.
+//this just means find the file fetchUsers and export everything that is being exported from it.
 export * from './thunks/fetchUsers';
 export * from './thunks/addUser';
 export * from './thunks/removeUser';

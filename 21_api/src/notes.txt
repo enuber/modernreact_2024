@@ -52,7 +52,7 @@ reducers should only operate on their arguements no outside variables.
 
 ---
 
-chapter 359 - Addomg state for data loading
+chapter 359 - Adding state for data loading
 
 flow of what is expected
 show a loading message while we are making the request
@@ -97,16 +97,18 @@ If there is an error, it is the same process. But the action will have something
 
 chapter 361 - Steps for adding a thunk
 
+these thunks can be found in store > thunks
+
 creating an async thunk
 
 1. create a new file for your thunk. name it after the purpose of the request
 2. create the thunk. give it a base type that describes the purpose of the request
-3. in the thunk, make the request, return the data that you want to use in the reducder
+3. in the thunk, make the request, return the data that you want to use in the reducer
 4. in the slice, add extraReducers, watch for the action types made by the thunk
 5. export the thunmk from the store/index.js file
 6. when a user does something, dispatch the thunk function to run it.
 
-the first argument that we provide to create async thunk is going to be referred to as our base type. So it's going ot be a string. its going to be used to generate the types that were like type|pending or type|fulfilled. So in fetchUsers.js when we say
+the first argument that we provide to create async thunk is going to be referred to as our base type. So it's going to be a string. its going to be used to generate the types that were like type|pending or type|fulfilled. So in fetchUsers.js when we say
 
 const fetchUsers = createAsyncThunk('users/fetch');
 
@@ -114,7 +116,7 @@ the string is 'users/fetch' and for the action type being sent it will be 'users
 
 ---
 
-chapter 355
+chapter 362 More on Adding Thunks
 
 when we go into userSlice, we import in the fetchUsers thunk. Automatically created for us in that thunk are
 fetchUsers.pending
@@ -125,7 +127,7 @@ which means we don't have to type this into the extraReducers type field. The fi
 
 ---
 
-chapter 376
+chapter 390 - Album Feature Overview
 
 fetch albums for specific user
 
@@ -139,7 +141,7 @@ post request to localhost:3005/albums with title and userId, the id itself will 
 
 ---
 
-chapter 377
+chapter 391 - Additional components
 
 application level state - state that many components will care about. Best stored in Redux.
 
@@ -147,14 +149,15 @@ component level state - state that only one component will care about. Best stor
 
 ---
 
-chapter 383
+chapter 397 - Introducing RTK Query
 
 Redux Toolkit Query
 
-we use this module and some fuctions inside of it to create an API. When we are using RTQ we are talking about some client side code that we write in our React application. It's goal is to provide an interface to go and fetch data. After config we are going to get back a slice, which contains a combied reducer. some of those many reducers, a bunch of action creator functions and so on. This API is also going to contain some thunk functions as well. Ultimately what we care about are a collection of hooks. These hooks are going to automate the data fetching process inside of our components.
+we use this module and some fuctions inside of it to create an API. When we are using RTQ we are talking about some client side code that we write in our React application. It's goal is to provide an interface to go and fetch data. After config we are going to get back a slice, which contains a combined reducer. some of those many reducers, a bunch of action creator functions and so on. This API is also going to contain some thunk functions as well. Ultimately what we care about are a collection of hooks. These hooks are going to automate the data fetching process inside of our components.
 
 For our project we will be creating a series of endpoints fetchAlbums, AddAlbum and removeAlbum. These endpoints will have instructions on how to do what they imply that they are going to do. We will get back some specific hooks as well.
 
+these are hooks that will automate the request-making process...
 useFetchAlbumsQuery, useAddAlbumMutation, useRemoveAlbumMutation
 
 Query - means we are making a request to read or fetch some data.
@@ -168,9 +171,8 @@ this will be inside a component and, we will then do something with this info su
 
 ---
 
-chapter 384
+chapter 398 - creating RTK Query API
 
-creating RTK Query API
 1 identify a group of related request that your app needs to make
 
 2 make a new file that will create the api
@@ -180,14 +182,14 @@ creating RTK Query API
 reducerPath - property on the big state object where all the API state should be maintained. This will have tons of state added by the API to handle requests. The reducerPath here is albums. It can't be same key that has been used and should describe what it is being used for.
 
 albums: {
-queries: {},
-mutations: {},
-provided: {},
-subscriptions: {},
-config: {}
+  queries: {},
+  mutations: {},
+  provided: {},
+  subscriptions: {},
+  config: {}
 }
 
-4 The api needs ot know how and where to send requests. Add a baseQuery.
+4 The api needs to know how and where to send requests. Add a baseQuery.
 
 we import fetchBaseQuery from redux toolkit. It is a function to make a pre-configured version of 'fetch'. Fetch is what we normally use to make requests to get some data similar to axios but fetch is built into the browser.
 

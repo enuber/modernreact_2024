@@ -1,6 +1,9 @@
 import classNames from 'classnames';
 
+// Note: uses keyframe and animation defined in tailwind.config.js
+
 function Skeleton({ times, className }) {
+  // adding the className to the bottom of this list allows us to pass in more classes, in our case we use it to set the height and width
   const outerClassNames = classNames(
     'relative',
     'overflow-hidden',

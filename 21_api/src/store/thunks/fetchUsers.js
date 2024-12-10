@@ -10,7 +10,7 @@ const fetchUsers = createAsyncThunk('users/fetch', async () => {
   return response.data;
 });
 
-//dev only
+//dev only - used to create a small pause to test out code loading users.
 const pause = (duration) => {
   return new Promise((resolve) => {
     setTimeout(resolve, duration);

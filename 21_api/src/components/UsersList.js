@@ -11,6 +11,7 @@ function UsersList() {
     useThunk(fetchUsers);
   const [doCreateUser, isCreatingUser, creatingUserError] = useThunk(addUser);
 
+  // reaches into the state and grabs users from the userSlice which includes data, isLoading and error
   const { data } = useSelector((state) => {
     return state.users;
   });
