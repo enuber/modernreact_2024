@@ -10,7 +10,7 @@ const albumsApi = createApi({
     return {
       //when accessing, this will be used but surrounded by other words. In this case useFetchAlbumsQuery also builder.query could be builder.mutation based on what the purpose of read/write/delete.
       fetchAlbums: builder.query({
-        //can be anything as long as what is here is also in the mutation to invalidate it.
+        //can be anything as long as what is here is also in the mutation to invalidate it. result error and arg (in our case calling arg...user because it makes more sense).
         providesTags: (result, error, user) => {
           const tags = result.map((album) => {
             return { type: 'Album', id: album.id };
@@ -30,7 +30,7 @@ const albumsApi = createApi({
         },
       }),
       addAlbum: builder.mutation({
-        //the three arguments are what we get normally, user is usually called arg but in this case it is the user we have been passing through so calling it that is okay.
+        //the three arguments are what we get normally, user is usually called arg but in this case it is the user we have been passing through so calling it that is okay. Note that these tags may not always look like this, what you need to validate can be different based on your case. we are adding in user.id here because if mulitple users are open it would refetch all data which we don't want.
         invalidatesTags: (result, error, user) => {
           return [{ type: 'UsersAlbums', id: user.id }];
         },

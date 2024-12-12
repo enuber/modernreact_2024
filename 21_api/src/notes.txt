@@ -197,7 +197,7 @@ we import fetchBaseQuery from redux toolkit. It is a function to make a pre-conf
 
 endpoints
 
-what is the goal: want to fetch a list of albums, want to creat an album, want to remove an album
+what is the goal: want to fetch a list of albums, want to create an album, want to remove an album
 
 give a simplified name: fetchAlbums, createAlbum, removeAlbum
 
@@ -205,11 +205,11 @@ query or mutation: querry, mutation, mutation
 
 what's the path for this request, relative to baseURL: /albums, /albums, /albums/+userId
 
-what's the query string for this: ?userId=userId, ,
+what's the query string for this: ?userId=userId, none , none
 
 what's the method for this request: GET, POST, DELETE
 
-what's the body for the req: , {title, userId},
+what's the body for the req: none , {title, userId}, none
 
 6 export all of the automatically generated hooks
 
@@ -219,7 +219,7 @@ what's the body for the req: , {title, userId},
 
 ---
 
-chapter 387
+chapter 401 - a few immediate notes
 
 const { data, error, isLoading} = useFetchAlbumQuery(user);
 
@@ -231,25 +231,26 @@ refetch - function tell the query to rerun
 
 ---
 
-chapter 390
+chapter 404 Differences between queries and mutations
 
 const [addAlbum, results] = useAddAlbumMutation();
-
 mutations give you a function to run when you want to change some data
 
-results is similar to what we get is something similar to what is in a query so data, error, isLoading...
+results is similar to what we get is something similar to what is in a query so data, error, isLoading...it gives us the status of the mutation
 
+
+const {data, error, isLoading} = useFetchAlbumsQuery(user);
 a query runs immediately when the component is displayed on the screen (by default)
 
 ---
 
-chapter 391
+chapter 405 Options for refetching data
 
 options for handling updated data
 
 1 take the newly created album from the reponse and add it into our list of albums
 Pro - only one request
-Con - all code is more complicate, response might not contain the needed data
+Con - all code is more complicated, response might not contain the needed data
 
 2 after creating a new album, make a second request to get all albums
 Pro - easier to picture data flow in app
@@ -257,7 +258,7 @@ Con - two requests
 
 ---
 
-chapter 392
+chapter 406 Request De-Duplcation
 
 Tag system...
 Automatic data refetching is implemented using the tag system
@@ -270,27 +271,27 @@ if we made two calls using useFetchAlbumsQuery in our code one after the other a
 
 ---
 
-chapter 393
+chapter 407 Some internals of RTKQ
 
 simplication...
 
-behind the scenes, right after first call is made, it goes and sees a second call. As the endpoint and the argument data is the same, RTKQ knows it has the same info. So rather than making the second call, it is going ot rteturn some information about this already created request to the second call.
+behind the scenes, right after first call is made, it goes and sees a second call. As the endpoint and the argument data is the same, RTKQ knows it has the same info. So rather than making the second call, it is going to return some information about this already created request to the second call.
 
 ---
 
-chapter 394
+chapter 408 Refetching with tags
 
 simplification...
 
 tag system is used to mark certain queries as being out of date or expired after specific mutations are executed.
 
-so with the tag system, we will mark our data with a tag and, when a mutation is called such as addAlbum, we will invalidate the tag letting the data know it is now out of date and should all to retrieve the updated data. This would happen to all queries with the same tag name.
+so with the tag system, we will mark our data with a tag and, when a mutation is called such as addAlbum, we will invalidate the tag letting the data know it is now out of date and should call to retrieve the updated data. This would happen to all queries with the same tag name.
 
 While this works, there needs to be fine tuning as, in our example if other users albums list are opened, this will cause requests to update data for each of them that are open which could end up being alot of info.
 
 ---
 
-chapter 401
+chapter 415 - Getting Clever with Cache Tags
 
 what to do if didn't have userId for the tag to remove an album
 
