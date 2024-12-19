@@ -1,0 +1,715 @@
+424 Why use typescript?
+
+Helps you catch errors during development
+
+Helps provide documentation for your components
+
+compiles to plain JS
+
+Doesn't improve performance
+
+
+ex: have a very small app that creates a card with some info like name job and email. In the UserProfile component we would like to receive that information as props.
+
+At the top of the file we can add
+
+interface UserProfileProps {
+  name: string;
+  job: string;
+  email: string;
+}
+
+function UserProfile({ name, job, email}: UserProfileProps) {}
+
+By doing this, when the component is called, it will give a warning via a red line under the component name if the correct props are not being passed in. 
+__________________________________________________________________________
+
+425 Basic Types and Type Annotations
+
+typescriptlang.org/play
+
+Type annotations help TS understand the data flowing through the app
+
+
+const hours: number = 10;
+
+const name: string = 'me';
+
+// here the :number after the () is referring to what is being returned from the function
+function square(val:number):number {
+  return val ** 2;
+}
+
+class Profile {
+  firstName: string = 'me';
+  lastName: string = 'me';
+
+  fullName(): string {
+    return `${this.firstName} ${this.lastName}`
+  }
+}
+
+Basic Types:
+
+Type : Example
+
+string : 'hi there' '' 'This is a string'
+number : 0 -.123 9999999
+boolean : true false
+string[] : ['hi', 'there', 'you'] <-- array of strigs
+number[] : [0, 40, -100.01] <--- array of numbers
+boolean[] : [true, false, 1>0] <-- array of booleans
+
+
+__________________________________________________________________________
+
+426 Function Type Annotations
+
+shows that arg coming in are number and that what is being returned is also a number
+function add(a: number,b: number) :number {
+  return a+b
+}
+
+function printColors (colors: string[]) {
+  console.log(colors);
+}
+printColors(['red', 'green', 'blue']) 
+
+
+function printAge(age: number) {
+  console.log(age)
+}
+printAge(10)
+
+__________________________________________________________________________
+
+427 Type Inference
+
+TS is smart, it can guess the types of your variables
+
+So if you have a variable that has a number TS will infer it should be of type number, or string in the case of a string. Same goes for functions where if we have a string being returned, it is inferred that what is being returned is of type string so we don't have to label everything.
+
+You can see this when you hover over some code, it will show the Inference
+
+const result = add(2, 3);
+
+Above this means hovering over result will show const result:number without us having to add the :number in.
+
+Only times we will put these on is when we want to be explicit so others know exactly what is being returned or, a function in progress. If a function is long or complicated it is also a good use case.
+
+__________________________________________________________________________
+
+428 Describing objects with interfaces
+
+
+1. first way is doing this inline
+
+function formatCar(car: {year: number, make: string, model:string}) {
+  return `Year: ${car.year}, model: ${car.model}, make: ${car.make}`;
+}
+
+formatCar({
+  year: 2015,
+  make: 'Ford',
+  model: 'Mustang'
+})
+
+2. interface - note that interfaces are extremely common in React where each component will have an interface describing the props being received.
+
+// usually done with capital letter
+interface Car {
+  year: number, 
+  make: string, 
+  model:string
+}
+
+function formatCar(car: Car) {
+  return `Year: ${car.year}, model: ${car.model}, make: ${car.make}`;
+}
+
+formatCar({
+  year: 2015,
+  make: 'Ford',
+  model: 'Mustang'
+})
+
+__________________________________________________________________________
+
+429 Using interfaces to Annotate props
+
+have a TaskShow component that takes in the following props: title (string) and complete (boolean)
+
+interface TaskShowProps {
+  title: string,
+  completed: boolean
+}
+
+function TaskShow({title, completed}: TaskShowProps) {
+  return <div>
+    {title} - {completed ? 'Done' : 'Need to complete'}
+  </div>
+}
+
+// now when using the component if we aren't providing the correct things we will get "errors" via red lines that show there is an issue.
+<TaskShow title='walk' completed={true} />
+
+__________________________________________________________________________
+
+430 Downsides ot Type interface
+
+interface Car {
+  year: number, 
+  model:string
+}
+
+function printCar(car: Car) {
+  return `Year: ${car.year}, model: ${car.model}`;
+}
+
+formatCar({
+  year: 2015,
+  make: 'Ford',
+  model: 'Mustang'
+})
+
+const mustang: Car = {
+  model: 'Mustang',
+  year: 2015
+}
+
+// by doing this, we would find out that year is not correct
+const camaro: Car = {
+  model: 'Camaro',
+  year: '2010'
+}
+
+// all works as expected
+printCar(mustang) 
+
+// because year is not a number will get a warning. Would have been nice to get an earlier warning. This would be if we didn't call :Car on the variables above. By doing that we would get the error message when declaring the variable
+printCar(camaro)
+
+__________________________________________________________________________
+
+431 Function Types
+
+This shows how to define functions being used in an object, you have to use () => where what is inside the () are the variables being passed into the functions defined with their type and after the => you show what is being returned from the function, void means nothing is being returned.
+
+To note when defining the variables inside of the () in the interface, they don't have to match what the names in the object, the important thing to note is whatever they are called is what will show up in errors when hovering over something throwing an error. 
+
+
+// void means doesn't return anything
+interface Car {
+  year: number, 
+  model:string,
+  setYear: (nextYear: number) => void;
+  setModel: (nextModel: string) => void;
+  getDescription: () => string;
+}
+
+
+const mustang: Car = {
+  model: 'Mustang',
+  year: 2015,
+  setYear(nextYear: number) {
+    this.year = nextYear;
+  },
+  setModel(nextModel: string) {
+    this.model = nextModel;
+  },
+  getDescription() {
+    return `Year: ${this.year}, Model: ${this.modal}`;
+  }
+}
+
+__________________________________________________________________________
+
+432 Function Types in Props interfaces
+
+going to create a component called ColorPicker that takes in props of colors which is an array of strings and a handleColorSelect function that gets called with a string and returns nothing. 
+
+interface ColorPickerProps {
+  colors: string[];
+  handleColorSelect: (color: string) => void;
+}
+
+function ColorPicker({colors, handleColorSelect}:ColorPickerProps) {
+  const renderedColors = colors.map(color => {
+    return <button key={color} onClick => {() => handleColorSelect(color)}>{color}</button>
+  })
+  return <div>
+    {renderedColors}
+  </div>
+}
+
+//don't need :string on color in the function because TS knows we must pass in a string because of the interface
+<ColorPicker colors={['red', 'green', 'blue']} handleColorSelect={(color) => console.log(color)} />
+
+__________________________________________________________________________
+
+433 Extending an interface
+by using extends we can add in additional properties. It uses the main interface like it is copying those properties and pasting them into the new interface. You just need to add in whatever properties you would like in your new interace. This allows reuse of properties without having to type them over and over. This feature is not often used in React but can be used in other projects especially libraries 
+
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+}
+
+interface ButtonProps extends ButtonProps {
+  icon: string;
+}
+
+function Button({label, onClick}: ButtonProps) {
+  return <button onClick={()=> onClick()}>{label}</button>
+}
+
+function IconButton({label, onClick, icon}: IconButtonProps) {
+  return <button onClick={()=> onClick()}>{icon}{label}</button>
+}
+
+__________________________________________________________________________
+
+434 Type Unions ||||| 435 Type Narrowing with Type Guards ||||| 436 Tricky Cases with Type Guards
+
+we don't build functions like these where we have different basic function that take in what type of value, 
+
+function printNumber(value: number) {}
+
+function printString(value: string) {}
+
+we build functions like this where value may be many different types.
+function print(value: ??? ) {}
+
+so here is an example of a component that takes in many types of values
+
+interface Image {
+  src: string;
+}
+
+// NOTE code below is example, doesn't do anything would need to add in console.logs()
+// this is a type union where it can be one of these types
+function logOutput(value: string | number | string[] | Image) {
+  // this is a type guard. We are checking if value is a string and, if it is doing something to it. If we were to hover over value inside of this guard it would show up as a string only. If we were to hover on value outside of this guard it would show all the possibilities (ie string number string[] Image)
+  if (typeof value === 'string') { 
+    value.toUpperCase() 
+  }
+  if (typeof value === 'number') { 
+    Math.round(value)
+  } 
+  if (Array.isArray(value)) {
+    value.join(' ');
+  }
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    value.src
+  }
+}
+
+logOutput('hi there');
+logOutput(123);
+logOutput(['hi', 'there']);
+logOutput({src: 'img.jpg'});
+
+__________________________________________________________________________
+
+437 Type Predicates
+
+interface Image {
+  src: string;
+}
+
+interface User {
+  username: string;
+}
+
+// this is just showing how to find out which is correct, as they are both objects. Because we must have one type or the other, we can also remove the second if statement and just make it an else because if 'username' in value is not true than it must be an Image type. 
+function logOutput(value: Image | User) {
+  if ('username' in value) {
+    console.log(value.username);
+  }
+  if ('src' in value) {
+    console.log(value.src);
+  }
+}
+
+// corrected and will still work as expected where value when hovered on within the if/else statment will show the correct Type for value
+function logOutput(value: Image | User) {
+  if ('username' in value) {
+    console.log(value.username);
+  } else {
+    console.log(value.src);
+  }
+}
+
+
+// this is a type predicate, not very often used. the part that is the predicate is the : value is user part. It is saying if what we are returning is true, then it must be a user, if it returns false it isn't a user so must be an image
+function isUser(value: Image | User) : value is User {
+  return 'username' in value;
+}
+
+function logOutput(value: Image | User) {
+  if (isUser(value)) {
+    console.log(value.username);
+  } else {
+    console.log(value.src);
+  }
+}
+
+logOutput({src: 'img.jpg'});
+logOutput({ username: 'asddfkl'})
+
+
+__________________________________________________________________________
+
+438 Optional properties
+
+brand new user 
+const user = {
+  id: 'abc',
+  username: 'new user'
+}
+
+user who has signed up and created a Profile
+const user = {
+  id: 'abc',
+  username: 'new user',
+  profile: {
+    likes: ['cats']
+  }
+}
+
+interface UserProfile {
+  likes: string[];
+}
+
+// using the ? after the property name says this is optional, it may or may not exist.
+interface User {
+  id: string;
+  username: string;
+  profile?: UserProfile;
+}
+
+//this works just fine.
+const user: User = {
+  id: 'abc',
+  username: 'me',
+}
+
+// now this also works as well
+const user: User = {
+  id: 'abc',
+  username: 'me',
+  profile: {
+    likes: ['cats']
+  }
+}
+
+doing this will show user.profile with red line underneath because it may or may not be defined per the Type. So we have to use a type guard to make sure it does exist so that the red underline doesn't appear.
+user.profile.likes 
+
+to type guard this now to make sure that user.proflie.likes exists can do one of these
+if (user.profile) {
+  user.profile.likes;
+}
+or, this will check to see if profile exists and if not will ignore the .likes
+user.profile?.likes
+
+// can use this ? to also do this as being optinal in arguments.
+function logValue(value: string, message?: string) {
+  if (message) {
+    console.log(message, value)
+  } else {
+    console.log(value)
+  }
+}
+
+logValue('lasdlg');
+logValue('asdfkl', 'message here');
+
+__________________________________________________________________________
+
+439 The Any and Unknown Types
+
+Any - special type that tells TS to ignore type checking around this variable, avoid using in your code, can use an "as" type assertion to forcibly tell TS what an 'any' variable type is
+
+Unknown - Special type that tells TS this variable can be anything, we have to do aggressive type narrowing before assuming what an 'unknown' variables real type is
+
+
+interface Book {
+  title: string;
+}
+
+//NOTE: Promise<book> means that because this is an async function, we are actually returning a promise as it happens asynchronously and, that Promise is supposed to be returning something that will be of Type Book. Also, this doesn't have to be put in as it is inferred but, here in case it is seen it is understood what it means.
+
+// here data is type any even though it is the book. 
+async function fetchBook(): Promise<Book> {
+  const res = await fetch('/book');
+  const data = await res.json();
+
+  // a type assertion where we say what data is as otherwise it would be type any which we don't want
+  return data as Book;
+}
+
+async function run() {
+  const book = await fetchBook();
+}
+
+// Unknown usage
+async function fetchBook(): Promise<Book> {
+  const res = await fetch('/book');
+  const data: unknown = await res.json();
+
+  if (data && typeof data ==== 'object' && 'title' in data && typeof data.title === 'string') {
+    return data as Book;
+  }
+  throw new Error('Expected to get a book but didn\'t')'
+}
+
+async function run() {
+  const book = await fetchBook();
+}
+
+__________________________________________________________________________
+
+440 Type Aliases
+
+interface Image {
+  src: string;
+}
+
+// this is a type alias it can be used now to declare a type similar to an interface rather than having to type this out all over.
+type LoggableValue = string | number | string[] | Image;
+
+function logValue(value: LoggableValue) {
+
+}
+
+use interface when describing a plain object or when we want to extend one type with another. 
+
+use type alias whenever you need to compute a new type. like a type union as shown above in LoggableValue.
+
+
+__________________________________________________________________________
+
+441 Life without Generics
+
+Generics - makes it easier to write functions, interfaces, and more that work with multiple different types
+
+function wrapInArray(value: string | number): (string | number)[] {
+  return [value];
+}
+
+//problem here is now result and result 2 will show as (string | number)[]
+const result = wrapInArray('cat');
+const result2 = wrapInArray(10);
+
+__________________________________________________________________________
+
+442 Introduction to Function Generics
+
+function wrapInArray<TypeToWrap>(value: TypeToWrap): TypeToWrap[] {
+  return value;
+}
+
+wrapInArray<TypeToWrap>(value);
+
+In the above imagine putting in "string" where TypeToWrap is located. Then "number". This allows different Types to pass through the function and the type returned will be what we expect rather than one of mulitple things.
+
+ex: note that TypeToWrap can be anything at all most usual you will see "T"
+function wrapInArray<TypeToWrap>(value: TypeToWrap): TypeToWrap[] {
+  return [value];
+}
+
+const result = wrapInArray<string>('cat');
+const result2 = wrapInArray<number>(10);
+
+__________________________________________________________________________
+
+443 More on Function Generics
+
+another example. We are using id as either a string or number 
+
+function toRecord<T>(id: <T>, value: string){
+  return {
+    id, value
+  }
+}
+
+const result = toRecord<number>(123, 'my@email.com');
+const result2 = toRecord<string>('eao1', 'email@email.com')
+
+__________________________________________________________________________
+
+444 multiple generic types
+
+This is how we pass in multiple generic types, the order matters only in the case of if <number, string> whatever <T, U> is will match that. But, in the function call itself, the order of arguments doesn't have to match. Basically generic is saying we expect two generics in this case, one is going to be of this type, the other of that type and, as long as we pass these to the correct parameters in the function call the generics order doesn't matter.
+// T U V W X Y Z... if we have mulitple generics this is standard way of doing this
+function toRecord<T, U>(id: <T>, value: <U>){
+  return {
+    id, value
+  }
+}
+
+const result = toRecord<number, string>(123, 'my@email.com');
+const result2 = toRecord<string, number[]>('eao1', [1, 5, 7]);
+
+__________________________________________________________________________
+
+445 More Generic Examples
+
+
+// another case where we are passing in different array types but what comes out is either a number or letter so can do it this way where we pass in the generic, declare in the parameters the Type being that generic[].
+function randomELement<T>(arr: T[]) {
+  const index = [Math.floor(Math.random() * arr.length)];
+  return arr[index];
+}
+
+const result = randomElement<number>([1,2,3]);
+const result = randomELement<string>(['a', 'b', 'c'])
+
+__________________________________________________________________________
+
+446 generics with fetch
+
+interface User {
+  username: string
+}
+interface Message {
+  content: string
+}
+interface Image {
+  url: string
+}
+
+async function fetchData<T>(path: string): Promise<T> {
+  const res = await fetch(path);
+  const json = await res.json();
+  return json as T;
+}
+
+const run = async() => {
+  const user = await fetchData<User>('/users');
+  const message = await fetchData<Message>('/messages');
+  const image = await fetchData<Image>('/images');
+}
+
+__________________________________________________________________________
+
+447 Generic Type Inference
+
+function wrapInArray<T>(value: T): T[] {
+  return [value];
+}
+
+// this is generic type inference, we don't have to pass in what Type it is because TS is smart and understand what we are passing in. 
+const result = wrapInArray('cat');
+const result2 = wrapInArray(10);
+
+__________________________________________________________________________
+
+448 More on Genteric Type Inference
+
+another example:
+
+function callAndReturn<T>(fn: () => T): T {
+  return fn();
+}
+
+// because generic type inference we don't have to pass in the generic type
+const result = callAndReturn(() => 5);
+const result2 = callAndReturn(() => 'what?');
+
+__________________________________________________________________________
+
+449 Issues with Generic Type Inference
+
+before fixing... in this funciton below useState is a generic fuction, it has no idea what you are going to be passing in. So whenever you use useState the Type definition for this function, it doesn't really know what you are trying to store. With the way useState works, we are relying on Generic Type Inference to know what Type (in this case) colors is,  or whatever value we are using in replace of colors. At this point, we have not given TS enough info to figure out what the elements inside the array are going to be. When you hover over colors you will get colors: never[]. So when you try to add the 'red' string in, it is why you get the Type error. 
+
+import {useState} from 'react';
+
+fuction ColorPicker() {
+
+  const [colors, setColors] = useState([]);
+
+  const handleClick = () => {
+    // before fixing we get the error message Type string is not assignable to type never
+    setColors([...colors, 'red'])
+  }
+  return <button onClick={handleClick}>Click</button>
+}
+
+to fix...
+
+import {useState} from 'react';
+
+fuction ColorPicker() {
+
+  const [colors, setColors] = useState<string[]>([]);
+
+  const handleClick = () => {
+    // before fixing we get the error message Type string is not assignable to type never
+    setColors([...colors, 'red'])
+  }
+  return <button onClick={handleClick}>Click</button>
+}
+
+point is that Generic Type Inference works just fine most of the time but there are points like above where TS is not getting enough info to be able to do this on it's own.
+
+__________________________________________________________________________
+
+450 Generic Type Constraints
+
+A generic type constraint kind of sets up a requirement or a limitation around a generic type. 
+
+ex:
+
+// this forces a requirement of what is being passed in to the Generics. It will make sure whatever coming in is in fact an Object. This can be used on many different types of things being passed in not just objects. 
+function merge<T extends object, U extends object>(objA: T, objB: U) {
+  return {...objA, ...objB};
+}
+
+// with the way this is set up now, result when hovering will show it is of Type {id: string} & {color: string}. This means we can do result.id or result.color
+const result = merge(
+  {id: '004'},
+  {color: 'blue'}
+)
+
+// the issue is that this works just fine as well. and we want the function used a specific way so we need to specify a requirement, adding in the Generic Type Constraint will make this error out.
+const result2 = merge(
+  5,
+  'red'
+)
+
+__________________________________________________________________________
+
+451 More on Generic Type Constraints
+
+ex:
+
+interface Product {
+  name: string;
+  count: number;
+}
+
+// this is making a Type Alias, this will give us the keys of Product which are name and count. Which will be useful to make sure what is being passed in the function is one of these two keys
+type ProductKeys = keyof Product;
+
+//this works bevause name is in Product
+const key: ProductKeys = 'name';
+
+//this doesn't because it's not so we would get a warning
+const key1: ProductKeys = 'id';
+
+
+ex:
+
+// T we are doing what is shown above in a simplified way. We are saying that T must be a key that is found in U. So in the case below it must be count or name. Anything else will throw a warning error.
+// U are the objects in the array so we are saying that this must be an object. 
+function collect<T extends keyof U, U extends object>(key:T, arr: U[]) {
+  return arr.map(el => el[key]);
+}
+
+// if name we would get result: string[] if count we would get result: number[]
+const result = collect('name', [
+  {count: 1, name: 'orange'},
+  {count: 20, name: 'apple'}
+]);
