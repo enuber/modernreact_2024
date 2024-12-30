@@ -155,7 +155,7 @@ function TaskShow({title, completed}: TaskShowProps) {
 
 __________________________________________________________________________
 
-430 Downsides ot Type interface
+430 Downsides of Type interface
 
 interface Car {
   year: number, 
@@ -248,14 +248,14 @@ function ColorPicker({colors, handleColorSelect}:ColorPickerProps) {
 __________________________________________________________________________
 
 433 Extending an interface
-by using extends we can add in additional properties. It uses the main interface like it is copying those properties and pasting them into the new interface. You just need to add in whatever properties you would like in your new interace. This allows reuse of properties without having to type them over and over. This feature is not often used in React but can be used in other projects especially libraries 
+by using extends we can add in additional properties. It uses the main interface like it is copying those properties and pasting them into the new interface. You just need to add in whatever properties you would like in your new interface. This allows reuse of properties without having to type them over and over. This feature is not often used in React but can be used in other projects especially libraries 
 
 interface ButtonProps {
   label: string;
   onClick: () => void;
 }
 
-interface ButtonProps extends ButtonProps {
+interface IconButtonProps extends ButtonProps {
   icon: string;
 }
 
@@ -413,7 +413,7 @@ if (user.profile) {
 or, this will check to see if profile exists and if not will ignore the .likes
 user.profile?.likes
 
-// can use this ? to also do this as being optinal in arguments.
+// can use this ? to also do this as being optional in arguments.
 function logValue(value: string, message?: string) {
   if (message) {
     console.log(message, value)
@@ -646,7 +646,6 @@ fuction ColorPicker() {
   const [colors, setColors] = useState<string[]>([]);
 
   const handleClick = () => {
-    // before fixing we get the error message Type string is not assignable to type never
     setColors([...colors, 'red'])
   }
   return <button onClick={handleClick}>Click</button>
@@ -693,7 +692,7 @@ interface Product {
 // this is making a Type Alias, this will give us the keys of Product which are name and count. Which will be useful to make sure what is being passed in the function is one of these two keys
 type ProductKeys = keyof Product;
 
-//this works bevause name is in Product
+//this works because name is in Product
 const key: ProductKeys = 'name';
 
 //this doesn't because it's not so we would get a warning
