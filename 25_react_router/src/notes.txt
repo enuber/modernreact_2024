@@ -1,0 +1,332 @@
+466. App Overview
+
+1. npm create vite projectname -- --template=react-ts
+
+2.
+go to tailwind doc
+tailwindcss.com/docs/guides/vite
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+3.
+then update tailwind.config.js
+
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+4. index.css remove all code in initial project setup from vite add in...
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+5. Remove app.css file, in app.tsx file to start, removing everything down to just this basic setup
+
+function App() {
+  return <div>Hi There!</div>;
+}
+
+export default App;
+
+6. npm run dev and go tot he localhost listed in terminal
+
+__________________________________________________________________________________________
+
+467. Introducing React Router
+
+when making use of react router, we're gonna create something called a browser router. This is an object that's gonna watch the path in the address bar. The path is everything in the address bar after the domain name and port that the user is visiting. So will be watching for /search or /packages. Depending on this ppath that the user is visiting, the browser router is going to show the correct page for that route. 
+
+So for set up we are going to have a components folder that contains reuseable components like the header and then have a pages folder that contains each indivdiual page, (home, details, search). These are still react components but the intent is to communicate to others that these components are meant to display distinct screens or pages in the application. 
+
+For the header, you could drop a <Header /> component into each of them and, it would work but, it is better to show common elements using react router. Instead we will creaste a Root Layout. It will wrap up all the different pages we're trying to show inside the application. The root layout is the place to show some common UI elements or some elements that need to be displayed on each individual page. Like a header or footer. 
+
+__________________________________________________________________________________________
+
+468. React Router setup
+
+npm install react-router-dom
+
+in order to display the component that the browser router has selected for us to show we will import a special component called Outlet from react-router-dom. It reaches up to that browser router through through the context system and sees what the currenttly selected component is. So the outlet will display the correct page for us. This basically happens behind the scenes for us. 
+
+Once the "root" is set up, we still need to set up the browser router which is done in the App.tsx file. Need to import createBrowserRouter and RouterProvider from react-router-dom. Along with this, we need all the rest of the pages imported as well.
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: '/search',
+        element: <SearchPage />,
+      },
+      {
+        path: '/packages/:name',
+        element: <DetailsPage />,
+      },
+    ],
+  },
+]);
+
+How to read this, the path is what happens if someone goes to that in the URL. The element shows what page will be displayed at that given path. For the <HomePage /> if the route doesn't match one of the other paths, it will "fallback" to this page. The index: true route is essentially the "default" child route of its parent. When the parent route's path matches (path: '/' in this case), the index: true child route will automatically render.
+
+Then to get the router working you simply need to wrap the application with RouterProvider and pass our router in to the the router.
+
+function App() {
+  return <RouterProvider router={router} />;
+}
+
+__________________________________________________________________________________________
+
+469 Navigating with a Link
+
+We will have the logo that will link back to the home page.
+
+on pages we will want links we can import "Link" from react-router-dom. This will show an <a> tag but behaves differently and does what we want. This is used to navigate around the application. If you want to link off to a separte page that isn't apart of your site then you fallback to the traditional <a> tag.
+
+<Link to="path_to_go_to">info here</Link>
+
+
+__________________________________________________________________________________________
+
+470 Programmatic navigation
+
+Programatic navigation - when we want to run some code at a very specific point in time that tries to navigate a user to another part of the page. Example the search component that when someone searches for something, it would then go to the search results. 
+
+Step 1:
+Once the SearchInput page has been created we need to determine where we want to send them when the search is done. In our case we want them to go to the "/search" page. We will use a query string ?term=searchedterm. 
+
+Step 2: 
+How we are going to navigate them. We saw that we can use a Link tag but in this case we need to use programmatic navigation. In order to do that we use a hook called useNavigate. We call this hook and assign it to a variable most often called "navigate"
+
+const navigate = useNavigate();
+
+Now when we call navigate we can foricbly navigate a user over to where we want or to some other route in our applicaiton.
+
+example basic authorization
+
+const handleClick = async () => {
+  const canGo = awaite axios.get('/users/cango');
+  if (canGo) {
+    navigate('/search')
+  }
+}
+
+__________________________________________________________________________________________
+
+471 Form Submission Navigation Shortcut
+
+Third way to navigate a user around. Doesn't get used often, it exists but may see it in the wild.
+
+Specific to forms submission.
+
+import {Form} from 'react-router-dom';
+
+function Page() {
+  return <Form action='/search'>
+    <button>Submit</button>
+  </Form>
+}
+
+function Page() {
+  return <Form action='/search'>
+    <input name="term"/>
+  </Form>
+}
+
+Looking for a Form submission, it is alot less code then what we did in previous video where we created a useState hook, a useNavigate hook and sent them along with a query term etc.
+
+Notice that this Form is from react-router-dom and is not a traditional form element. We assign the action to where we want them to go to. in the above it goes to /search.
+
+In second example where we use an input, by giving a prop of name and what we want name to be, we are setting this up to be a query string of term that is equal to the inputted text. So it does this without all the extra code. 
+
+Why use one over the other. Programmatic navigation gives you more control and allows you to do other things that you may want to do. The <Form> way is less code and more simplified and plays nicely with BrowswerRouter since it is apart of the same package. So it does things for you that otherwise you may nave to programmatically right out.
+
+
+__________________________________________________________________________________________
+
+472 A touch of styling 
+
+npm i react-icons
+
+__________________________________________________________________________________________
+
+473 The Registry API
+
+need to connect to the npm registry 
+
+github.com/npm/registry/blob/master/docs/REGISTRY-API.md
+
+will make specific types of requests
+
+get details on a specific package - 
+registry.npmjs.org/<name of package>
+
+
+search for packages -
+registry.npmjs.org/-/v1/search?text=<search term>
+
+__________________________________________________________________________________________
+
+474 Fetching Data with React Router
+
+React Router has some tools to allow fetching of data. 
+
+on small projects consider using fetching data with react router
+medium or larger projects use Redux or a smaller project that is a bit more complex
+
+
+to use react router to fetch data, we will have some loader functions that fetches data for the page. 
+
+browser router --> homeLoader, searchLoader, detailsLoader --> homepage, searchPage, detailsPage
+
+the Loader portion above are extremely simple functions, will call the function, it will make a request, and it will return that data. Then we can access that data from our different page components. These loader functions will be passed off to the browser router. Whenever we are about to display a page, the browser router is going to automatically call the appropriate loader function for us. The loader function will make a request, return it, then we magically get access to the data inside of the page. 
+
+we can do this directly in the browserRouter where we create a loader: () => {}
+
+on page we access the data, we need to bring in useLoaderData and then call it assigning it to a variable to hold the data being brought in.
+
+import { useLoaderData } from 'react-router-dom';
+
+export default function SearchPage() {
+  const data = useLoaderData();
+
+  console.log(data);
+
+  return <div>Search Page</div>;
+}
+
+__________________________________________________________________________________________
+
+475 More on Fetching with a Loader
+
+inside the loader, you can call for "request" which represents a user trying to navigate to this route inside our application. So it will include information about the user coming to the path that is defined in the "path". From this request, there is a URL proprety included that shows the full URL including the query string. From this we can parse it out and get the term. 
+
+
+const { searchParams } = new URL(request.url);
+const term = searchParams.get('term');
+
+What this does, first, we are taking just the URL property which is request.url. We are using that to create a URL object out of it which is what new URL() does. This new URL() is a built in object available in the browser. It allows us to grab certain pieces of information out of a URL. In this case we want searchParams. This is the query string. We then take that searchParams object and search for the query we actually want which in this case is the "term". 
+
+__________________________________________________________________________________________
+
+476 Designing new types
+
+using this page
+github.com/npm/registry/blob/master/docs/REGISTRY-API.md
+
+we can go down to see the type of response we get back from making a search request. This is how we go about designing a type...by looking at the response data. 
+
+GET·/-/v1/search
+
+the above is the area we are looking at as this is where we are making our request out to. Under that on the github page there is a response format.
+
+Top level properties: objects, total and time. We only care about the search results which is under object. 
+
+So then we look under Ojbect and we see there are mulitple properties: package, score, searchScore. We only care about the package.
+
+Then looking at package what we actually care about is the name, description, keywords and version. The rest of it we don't need or are looking for. 
+
+So once we understand what data we care about, we will create a type
+ 
+we will create a new interface called SearchResponse it is going to describe this object. We will then map over the SearchResponse and build up an array of new objects that are much nicer and easier to work with. These object will be called PackageSummary objects. Each object will be apart of an array and contain the information we want which is the name, verison, description and keywords. These are stored in array. Keywords will be an array of strings. 
+
+__________________________________________________________________________________________
+
+477 An Improved Project Structure
+
+Inside App.tsx, we have imports at the top, we created a router, we have request logic and then we are creating and exporting an App component. We are doing some very basic stuff but the App component is becoming hard to understand as it is quickly becoming quite large and different types of logic going on. 
+
+Defining a loader inside the App file is not a good idea, in addition, making our requests directly inside our loader function is not a good idea. 
+
+So moving forward we will refactor to this type of process
+
+src/
+  api/
+    queries/
+      searchPackages.ts (contains a function to make the actual API request)
+    types/ 
+      packageSummary.ts (Defines the "PackageSummary" interface)
+  pages/
+    search/
+      searchLoader.ts (Uses the searchPackages function to fetch data)
+      SearchPage.tsx
+
+__________________________________________________________________________________________
+
+478 Mapping the Response
+
+We are going to build out searchPackages. We cut out the request code from the loader function in App.tsx and will use that as the base. We expect a term to be passed into the function.
+
+We will define the SearchResponse interface inside this file because it is the only file that cares about it. As such, we don't need to worry about exporting it, or creating a separate file and importing it. It is okay to define the interface directly in the file that needs it. 
+
+
+__________________________________________________________________________________________
+
+479 Extracting the loader
+
+when creating the searchLoader, we could simply resturn the results but, it is good practice to send it back as an object. This is so that if we need to make multiple requests, we can quickly add in a new bit of data to the object. 
+
+Note that when the searchLoader is called, it will be called like this
+
+searchLoader({ request: new Request('https://example.com?term=test') });
+
+Type Annotation: The type { request: Request } tells TypeScript two things:
+1 The input to the function is an object.
+2 This object must have a request property, and that property must be of type Request.
+
+Imagine you’re given this object as an argument:
+
+const args = { request: { url: 'https://example.com', method: 'GET' } };
+Instead of accessing args.request.url, you destructure request from args, so you only deal with:
+
+const { request } = args;
+console.log(request.url); // 'https://example.com'
+
+The TypeScript : { request: Request } ensures that args conforms to the expected shape, where request is specifically a Request object.
+
+Why did we make SearchPackages and searchLoader... It is very common in more complex projects to have the loader functions make mulitple different requests. And if you make those multiple requests where you call fetch directly in the loader, it ends up being very confusing and hard to read. So we split out the fetch functionality into it's own file. 
+
+__________________________________________________________________________________________
+
+480 Connecting the Page and Loader
+
+whenever a user is about to navigate to the search page file, react router will first call search loader, the search loader is going to fetch some data and then return an object that contains that data. once the return happens, react router will render the search page component. Inside the search page, we make use of the useLoaderData hook to get the data that was passed in. 
+
+we still have an issue in the SearchPage where data is of type any | unknown. there are two ways to fix this. 
+
+1. not good for larger projects
+  first import the Type we created. and then forcibly tell TS what the data coming will be.
+
+
+import type { PackageSummary } from '../../api/types/packageSummary';
+
+  const data = useLoaderData() as { searchResults: PackageSummary[] };
+
+  cons: using this method may seem good however, if you go back into the searchLoader function and change the object key to something else besides searchResults, there will be no warning and no link to there being any issue. This means that we will get a console error but, not necessary why or what is causing it. There is no connection to what happened. So not the best way to do this.
+
+2. do this instead.
+
+got into the searchLoader, import the PackageSummary type. then export a new interface that explicity says what is being returned from the function and add it to the searchLoader function as the return type. This means TS will always make sure we are returning something with the structure we are expecting. 
+
+Then in SearchPage, import the new interface created in searchLoader and, use that to assert what the LoaderData should be. 
+
+This is more scalable and, will help make sure you know if there is an issue as you will get better error handling. You will get warnings if you try to grab something off the data that doesn't exist from within the SearchPage and, within searchLoader, if you try to rename the searchResults to something else, a warning will also occur. You have to change the interface in order to change the name in the returning object and, by doing this, inside of SearchPage you will then get a warning that the data being grabbed doesn't exist which will remind you that you have to update that too. So better warning/error system.
+
+__________________________________________________________________________________________
+
+481 Rendering the List of results
+
+We now have the list going inside of SearchPage. We will now create a new component that will render the list. PackageListItem will show one indivdiual card. We will pass this a single package as a prop to render. 

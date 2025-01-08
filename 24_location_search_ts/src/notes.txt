@@ -1,0 +1,182 @@
+451. Project overview
+
+Using vite
+
+npm create vite project_name -- --template react-ts
+
+1. npm create vite - initiates the creation of a new vite project
+2. --  - separates options for the npm create command from arguments meant for vite
+3. --template react-ts - specifies the type of template to use for a project in this case react as the library/framework and typescript as the programming language.
+
+cd project_name
+npm run dev
+
+
+for normal react project
+
+npm create vite@latest project_name -- --template react
+cd project_name
+npm install
+npm install @reduxjs/toolkit react-redux
+
+__________________________________________________________________________
+452. project setup
+
+tailwind.css/docs/guides/vite
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+in tailwind.config.js
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+create index.css file or add to existing file these three lines
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+__________________________________________________________________________
+
+454. App Architecture
+
+we are going to search for a location using a 3rd party App
+we will then display that under results
+each area will be a "place" so will be a place object
+
+Location Search - Here is where we will have a search term that gives us back the places which will be "state" of "places" which are the fetched list of places.
+
+The list of places will have a "go" button next to them so that when you click on the go button, the map will change and show the location. So we have to communicate that info to the map. To do so, in the App file there will be "state" of "place" which is the place that was clicked on. This will allow us to pass the info on to use in the map.
+
+To get that info from Location Search to App we will pass in something like onPlaceClick that will get the info and return it back up to the App file.
+
+The Map component will then receive the place from the App and zoom in on the given "place"
+
+Of particular note in all of this is that all three files/components need to know what the "place" object is so we will define an interface.
+
+interface Place {
+  id: number;
+  name: string;
+  longitude: number;
+  latitude: number;
+}
+
+__________________________________________________________________________
+
+455. Defining an interface
+
+.ts file - used for general TS code like interfaces, classes, functions, type definitiions...
+
+.tsx file - designed for writing React components using JSX syntax
+
+use "type" to import specifically some type information from the file
+import type { Place } from './api/Place';
+
+__________________________________________________________________________
+
+456. Typing of Props
+
+starting with the Map component, place can be one of two things, null when the app starts up as the Map has no information yet and then when it is passed a place to update the map for, it will have a type of "Place" which we created as an interface.
+
+__________________________________________________________________________
+
+457. Type Interface Around useState
+
+for the "app" file, the state will also have two different Types for state, null and Place. When app starts up the state will be null, when search happens then the state is updated and should be of type Place.
+
+doing this, without setting a generic type, it will be assumed that 'place' is of type Null and will never change.
+
+const [place, setPlace] = useState(null);
+
+we need to make sure it understands it can be one of two things. So need to set the generic type like this in order for place to be either of these two types.
+
+const [place, setPlace] = useState<Place | null>(null);
+
+__________________________________________________________________________
+
+458. Typing a Callback
+
+In location search, we have to do the same/similar thing where we are using useState and need to make sur it is understood what "places" is going to be. In this case it will be an array of type Place
+
+const [places, setPlaces] = useState<Place[]>([]);
+
+to do the callback function from App to LocationSearch, we will be passing down a function so in order to type that we would do.
+
+(place:Place) => void;
+
+remember:  you have to use () => where what is inside the () are the variables being passed into the functions defined with their type and after the => you show what is being returned from the function, void means nothing is being returned.
+
+
+because of type inference, we don't have to define p in the app file  because in
+LocationSearch we are telling TS what needs to be passed there so it is
+inferred that p will be of type Place if you want to you can do
+
+        
+<LocationSearch onPlaceClick={(p: Place) => setPlace(p)} />
+
+Definition in App:
+<LocationSearch onPlaceClick={(p) => setPlace(p)} />
+The onPlaceClick prop is being set to an inline function: (p) => setPlace(p).
+This function takes one parameter, p, which represents the selected place.
+Inside this function, setPlace(p) is called. This is the state updater function from the useState hook, which updates the place state in App.
+
+What LocationSearch does with it:
+The LocationSearch component receives onPlaceClick as a prop.
+Within LocationSearch, when a user clicks on a location (e.g., a search result or marker), it will trigger the onPlaceClick function and pass the selected Place object (p) to it.
+
+__________________________________________________________________________
+
+460. Searchin with the OSM api
+
+documentation for the location search api
+nominatim.org/release-docs/develop/api/Search/
+
+to do a search
+https://nominatim.openstreetmap.org/search?<params>
+
+paramater: value
+q:Free-form query string to search for
+
+we set this up in the api folder because it is long. Note that the following video will go through the issue we ahve where data:any showing that data is of type any which we don't want.
+
+__________________________________________________________________________
+
+461. why use interfaces?
+
+because we are using an API and getting back data, it is good to console log out what the info coming back is. When we set up the interface for this, we don't have to list everything out, just what we want/need. You can list out all of the properties coming back, it may be needed initially when building something out. You can later remove what you don't actually need.
+
+We are also now guaranteed that the API response will work with all of our other components because it is of type Place which is the interface defined in all of them. So now it is more clear why we made the interface in the first place. It was made to make sure that as we are putting together all these separate pieces of our application, they all kind of stuck with or satisfy the interface. So they are all now working as expected otherwise would give warnings if there is an issue. They all expect to exchange this Place object and that's why we made the Place interface at the beginning.
+
+__________________________________________________________________________
+
+463. Showing and Panning a Map
+
+//packages needed for the map
+npm i @types/leaflet leaflet react-leaflet
+
+note that this throws an error because vite uses React 18 instead of 19 have to either update React or do this
+npm install leaflet@^1.9.4 @types/leaflet@^1.9.3 react-leaflet@^4.2.1
+
+or upgrade react then run the first thing above.
+npm install react@^19.0.0 react-dom@^19.0.0
+
+import type { Map as LeafletMap } from 'leaflet';
+import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+
+leaflet is a stand alone library regardless if using react. So we are also importing react-leaflet so that leaflet works with react as well. 
+we will use useEffect for when the map pans around or the place prop changes. 
+we use useRef hook so we can get a direct reference to the map object because leaflet is a js only library. So we need this reference to be able to grab the map to be able to use the library. 
+MapContainer - coordinates the map
+tileLayer - specifies where we are going to pull actual tiles of the map
+marker - will set the marker based on the coordinates.
