@@ -329,4 +329,60 @@ ________________________________________________________________________________
 
 481 Rendering the List of results
 
-We now have the list going inside of SearchPage. We will now create a new component that will render the list. PackageListItem will show one indivdiual card. We will pass this a single package as a prop to render. 
+We now have the list going inside of SearchPage. We will now create a new component that will render the list. PackageListItem will show one indivdiual card. We will pass this a single package as a prop to render. Then with that, we will map over the results in the SearchPage and, pass in the term so that the card can be made.
+
+__________________________________________________________________________________________
+
+482 Focusing on the details page
+
+Details page is on /pacakges/:name route where :name can be anything. 
+
+This will show info about specific packages. 
+
+To get details on a specific package
+registry.npmjs.org/<package name>
+
+can use this to see the resonse within your browser so we can repeat what we did before to create an interface (type).
+
+registry.npmjs.org/json-server
+
+as this is following along with what we previously did...
+
+src/ 
+  api/
+    queries/
+      getPackage.ts (function to get packages for the home page)
+    types/
+      packageDetails.ts (interface that describes what a PackageDetail object is)
+  pages/
+    details/
+      detailLoader.ts 
+      DetailsPage.tsx
+
+__________________________________________________________________________________________
+
+NOTE: most of the details stuff is just repeating what was done for search. So no real notes as it's much quicker with less to explain.
+
+__________________________________________________________________________________________
+
+486 Accessing Route searchParams
+
+we need to call the getPackage function with a name but how do we get that name. In the App.tsx file, we use a path of "/packages/:name" where ":name" is a wildcard that can be anything. we need access to that part of the loader. 
+
+even though it's not really props we will call it props and pass it into the function. When console.log is used, we get params which has a name value and then the part that is the wildcard. This gets done automatically and the key is whatever we used as the wildcard name. So could be packageName instead of name. But regardless we will get "Params" that give us the wildcard as a key and the term. 
+
+
+//note that react-router-dom has a Params type that can be used as below to indicate we are grabbing just that from the "properties"
+import type { Params } from 'react-router-dom';
+
+Params is a generic Type - it is an object with some keys whose values are strings. 
+
+__________________________________________________________________________________________
+
+490. Fetching Packages in Parallel
+
+on the home page we will have four featured packages that will always remain the same. 
+
+instead of hardcoding we are going to create a getFeaturedPackages() component
+
+this will "get" the four packages done in parallel and, when we get them all, we will get an object that will be all four responses in one big array PackageDetails[]
